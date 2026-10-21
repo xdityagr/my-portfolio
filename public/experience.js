@@ -94,8 +94,12 @@ function syncTheme(){const light=root.dataset.theme==='light';if(themeButton){th
 themeButton?.addEventListener('click',()=>{const light=root.dataset.theme!=='light';if(light)root.dataset.theme='light';else delete root.dataset.theme;try{localStorage.setItem('portfolio-theme',light?'light':'dark')}catch{}syncTheme()});syncTheme();
 let introTimer;
 function finishIntro(){clearTimeout(introTimer);root.classList.remove('intro-pending');}
-function playIntro(){if(reduced.matches){finishIntro();return}if(!document.querySelector('.signature-intro')){location.href='/';return}root.classList.remove('intro-pending');void root.offsetWidth;root.classList.add('intro-pending');introTimer=setTimeout(finishIntro,3550)}
+function playIntro(){if(reduced.matches){finishIntro();return}if(!document.querySelector('.signature-intro')){try{sessionStorage.setItem('portfolio-replay-intro','yes')}catch{}location.href='/';return}root.classList.remove('intro-pending');void root.offsetWidth;root.classList.add('intro-pending');introTimer=setTimeout(finishIntro,3550)}
 if(root.classList.contains('intro-pending'))introTimer=setTimeout(finishIntro,3550);
 document.querySelector('.skip-intro')?.addEventListener('click',finishIntro);document.querySelector('.replay-intro')?.addEventListener('click',playIntro);
 addEventListener('keydown',event=>{if(event.key==='Escape'||event.key==='Tab')finishIntro()});
 reduced.addEventListener('change',()=>{if(reduced.matches)finishIntro()});
+
+// A restored history entry should never restore an unfinished intro veil.
+addEventListener('pagehide',finishIntro);
+addEventListener('pageshow',event=>{if(event.persisted)finishIntro()});

@@ -33,7 +33,7 @@ The production output is dist/. It includes the homepage, nine case studies, ré
 - public/styles.css — shared base and case-study styles.
 - public/app.js — project filtering and email copy.
 
-Dark mode uses black and white. Light mode keeps white backgrounds with cool blue and sage typography. The intro plays on every homepage load, can be skipped, and is disabled for reduced-motion preferences. Gallery cards bend along a shared cylinder on desktop; touch layouts stack cards and reveal color as they enter view. Navigation and content remain usable without JavaScript.
+Dark mode uses black and white. Light mode keeps white backgrounds with cool blue and sage typography. The intro plays on direct homepage visits and refreshes, can be skipped, and is disabled for reduced-motion preferences. Internal home links and browser history return immediately without replaying it. Gallery cards bend along a shared cylinder on desktop; touch layouts stack cards and reveal color as they enter view. Navigation and content remain usable without JavaScript.
 
 Contact: gauraditya@outlook.in. Canonical domain: adityagaur.dev. Repository: https://github.com/xdityagr/my-portfolio.
 

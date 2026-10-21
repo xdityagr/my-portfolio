@@ -107,6 +107,16 @@ try{
  // Intro replays on refresh; skip is immediate and the signature is centered.
  await page.goto(base);assert.ok(await page.locator('.signature-intro').isVisible());await page.locator('.skip-intro').click();
  await page.reload();assert.ok(await page.locator('.signature-intro').isVisible());await page.keyboard.press('Escape');assert.ok(!await page.locator('.signature-intro').isVisible());checks+=3;
+ // Returning to the homepage is navigation, not a fresh intro.
+ await page.goto(base+'/work/pineyard/');await page.locator('.back-link').click();await page.waitForURL(base+'/#work');
+ assert.ok(!await page.locator('.signature-intro').isVisible());checks++;
+ await page.goto(base+'/resume/');await page.locator('.monogram').click();await page.waitForURL(base+'/');
+ assert.ok(!await page.locator('.signature-intro').isVisible());checks++;
+ await page.reload();assert.ok(await page.locator('.signature-intro').isVisible());await page.locator('.skip-intro').click();checks++;
+ await page.locator('.index-row').first().click();await page.waitForURL('**/work/pineyard/');await page.goBack();
+ assert.ok(!await page.locator('.signature-intro').isVisible());checks++;
+ await page.goForward();await page.locator('.replay-intro').click();await page.waitForURL(base+'/');
+ assert.ok(await page.locator('.signature-intro').isVisible());await page.locator('.skip-intro').click();checks++;
  // Hover every featured card from both artwork and caption, including re-entry.
  const galleryTop=await page.locator('.work-scroll').evaluate(el=>el.getBoundingClientRect().top+scrollY);
  const cards=page.locator('.work-card');
