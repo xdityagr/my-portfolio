@@ -58,7 +58,9 @@ npm test builds and checks all 12 HTML pages, local links, anchor targets, proje
 
 ## Hosting
 
-Use the build command npm run build and output directory dist. No backend, environment secrets, or runtime API keys are required. Set the framework preset to Other when importing into a static hosting service. The custom domain is referenced in metadata; domain and deployment configuration are separate steps.
+vercel.json configures the Other framework preset, npm run build, and the dist output directory. Dependency installation is skipped because the production build uses only Node.js built-ins; Playwright is needed only for local browser tests. No environment variables or runtime API keys are required.
+
+Import xdityagr/my-portfolio into Vercel, keep the root directory at the repository root, and select main as the production branch. The committed configuration supplies the build settings. Directory routes use trailing slashes, and the PDF is served inline unless the download link is used. The custom domain adityagaur.dev is referenced in metadata; connect it separately after the deployment is verified.
 
 ## Assets
 
