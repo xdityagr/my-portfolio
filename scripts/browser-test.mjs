@@ -115,8 +115,7 @@ try{
  await page.reload();assert.ok(await page.locator('.signature-intro').isVisible());await page.locator('.skip-intro').click();checks++;
  await page.locator('.index-row').first().click();await page.waitForURL('**/work/pineyard/');await page.goBack();
  assert.ok(!await page.locator('.signature-intro').isVisible());checks++;
- await page.goForward();await page.locator('.replay-intro').click();await page.waitForURL(base+'/');
- assert.ok(await page.locator('.signature-intro').isVisible());await page.locator('.skip-intro').click();checks++;
+ assert.equal(await page.locator('.replay-intro,.palette-picker').count(),0,'Preview-only controls must not ship');checks++;
  // Hover every featured card from both artwork and caption, including re-entry.
  const galleryTop=await page.locator('.work-scroll').evaluate(el=>el.getBoundingClientRect().top+scrollY);
  const cards=page.locator('.work-card');
@@ -131,14 +130,79 @@ try{
    await page.mouse.move(cx,y);await page.waitForFunction(i=>document.querySelectorAll('.work-card')[i].classList.contains('is-inked'),i);
    await page.waitForFunction(i=>getComputedStyle(document.querySelectorAll('.case-badge')[i]).opacity==='1',i);checks++;
   }
-  const transform=await card.locator('.sheet-slice').nth(5).evaluate(el=>el.style.transform);
-  await page.mouse.move(cx+80,rect.y+rect.height*.2);
-  await page.waitForFunction(({i,t})=>document.querySelectorAll('.work-card')[i].querySelectorAll('.sheet-slice')[5].style.transform!==t,{i,t:transform});checks++;
+  await page.waitForFunction(i=>document.querySelectorAll('.work-image')[i].classList.contains('gpu-ready'),i);
+  await page.waitForTimeout(700);
+  const before=await art.screenshot();
+  await page.mouse.move(cx+150,rect.y+rect.height*.15);
+  await page.waitForTimeout(450);
+  const after=await art.screenshot();
+  assert.ok(!before.equals(after),'Card surface should visibly respond to cursor movement');checks++;
  }
  let downloads=0;page.on('download',()=>downloads++);await page.goto(base+'/resume/');await page.locator('.resume-full-preview').evaluate(img=>img.decode());assert.equal(downloads,0);checks++;
  await page.goto(base);await page.locator('.skip-intro').click();await page.locator('.theme-switch').click();
  assert.equal(await page.evaluate(()=>getComputedStyle(document.querySelector('.type-opening')).backgroundColor),'rgb(255, 255, 255)');
  await page.reload();await page.locator('.skip-intro').click();assert.equal(await page.evaluate(()=>document.documentElement.dataset.theme),'light');checks+=2;
+ // Undrawn signature strokes must not expose round-cap dots in Chromium.
+ await page.goto(base);await page.evaluate(()=>{for(const a of document.getAnimations())if(a.animationName==='signature-write'){a.pause();a.currentTime=100}});
+ const delayedOpacity=await page.locator('.signature-stroke').evaluateAll(els=>els.slice(2).map(el=>getComputedStyle(el).opacity));
+ assert.ok(delayedOpacity.every(v=>Number(v)===0));checks++;
+ await page.keyboard.press('Escape');
+ if(await page.evaluate(()=>document.documentElement.dataset.theme!=='light'))await page.locator('.theme-switch').click();
+ assert.equal(await page.locator('.palette-picker').count(),0);checks++;
+ const periwinkle=await page.locator('.last-word').evaluate(el=>getComputedStyle(el).color);
+ await page.reload();await page.keyboard.press('Escape');assert.equal(await page.locator('.last-word').evaluate(el=>getComputedStyle(el).color),periwinkle);checks++;
+ // Hero drift stays independent of the card renderer and respects motion controls.
+ await page.evaluate(()=>{
+  window.heroDraws=0;
+  const g=document.querySelector('.hero-field').getContext('webgl');
+  const draw=g.drawArrays.bind(g);
+  g.drawArrays=(...args)=>{window.heroDraws++;return draw(...args)};
+ });
+ await page.waitForTimeout(400);
+ const fieldDraws=await page.evaluate(()=>window.heroDraws);
+ assert.ok(fieldDraws>0&&fieldDraws<=14,'Hero should drift at a bounded frame rate');checks++;
+ await page.evaluate(()=>document.querySelector('[data-motion]').click());
+ await page.waitForTimeout(100);await page.evaluate(()=>{window.heroDraws=0});
+ await page.waitForTimeout(250);assert.equal(await page.evaluate(()=>window.heroDraws),0,'Paused hero should not draw');checks++;
+ await page.locator('.theme-switch').click();
+ await page.waitForTimeout(100);
+ assert.ok(await page.evaluate(()=>window.heroDraws>0),'Paused field must repaint when theme changes');checks++;
+ await page.evaluate(()=>document.querySelector('[data-motion]').click());
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await page.waitForTimeout(150);await page.evaluate(()=>{window.heroDraws=0});
+ await page.waitForTimeout(250);assert.equal(await page.evaluate(()=>window.heroDraws),0,'Reduced motion must freeze the field');checks++;
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ await page.evaluate(()=>scrollTo({top:document.querySelector('.work-scroll').offsetTop,behavior:'instant'}));
+ await page.waitForTimeout(250);await page.evaluate(()=>{window.heroDraws=0});
+ await page.waitForTimeout(250);assert.equal(await page.evaluate(()=>window.heroDraws),0,'Offscreen hero should not draw');checks++;
+
+ // Card drawing stops when the pointer and scroll settle.
+ await page.evaluate(()=>scrollTo({top:document.querySelector('.work-scroll').getBoundingClientRect().top+scrollY,behavior:'instant'}));
+ await page.waitForFunction(()=>document.querySelector('.work-image').classList.contains('gpu-ready'));
+ await page.mouse.move(400,400);await page.waitForTimeout(1000);
+ await page.evaluate(()=>{window.cardDraws=0;for(const c of document.querySelectorAll('.sheet-canvas')){const g=c.getContext('webgl');if(g){const draw=g.drawArrays.bind(g);g.drawArrays=(...args)=>{window.cardDraws++;return draw(...args)}}}});
+ await page.waitForTimeout(350);assert.equal(await page.evaluate(()=>window.cardDraws),0,'Settled cards should not draw continuously');checks++;
+ // Software rendering fallback still bends and fills, with no copied DOM slices.
+ const fallbackContext=await browser.newContext({viewport:{width:1440,height:1000}});
+ await fallbackContext.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){return type.startsWith('webgl')?null:original.call(this,type,...args)}});
+ const fp=await fallbackContext.newPage();await fp.goto(base);await fp.keyboard.press('Escape');
+ await fp.evaluate(()=>scrollTo({top:document.querySelector('.work-scroll').getBoundingClientRect().top+scrollY,behavior:'instant'}));
+ await fp.waitForFunction(()=>document.querySelector('.sheet-fallback.gpu-ready'));
+ await fp.mouse.move(20,30);await fp.waitForTimeout(700);
+ const neutral=await fp.locator('.work-image').first().screenshot();
+ await fp.mouse.move(500,420);await fp.waitForTimeout(700);
+ assert.ok(!neutral.equals(await fp.locator('.work-image').first().screenshot()),'Fallback must retain the animated surface');
+ assert.equal(await fp.locator('.sheet-slice').count(),0);checks++;
+ await fallbackContext.close();
+
+ // Footer remains fully visible at the actual document end, at every layout size.
+ for(const width of [320,390,768,1440]){
+  await page.setViewportSize({width,height:900});await page.goto(base);await page.keyboard.press('Escape');
+  await page.evaluate(()=>scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
+  await page.waitForTimeout(300);
+  assert.ok(await page.locator('.copyright').evaluate(el=>{const r=el.getBoundingClientRect();return r.bottom<=innerHeight&&r.top>=0&&getComputedStyle(el).opacity==='1'}),'Copyright clipped at '+width);
+  assert.ok(await page.locator('.footer-links').evaluate(el=>el.getBoundingClientRect().bottom<=innerHeight),'Footer controls clipped');checks+=2;
+ }
  assert.deepEqual(failures,[]);
  console.log('PASS: '+checks+' browser checks; responsive widths, all case studies, filters, clipboard, keyboard, history, reduced motion, touch, no-JS fallback, and 404.');
 }finally{await browser.close()}

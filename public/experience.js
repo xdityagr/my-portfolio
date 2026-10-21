@@ -1,3 +1,4 @@
+import { drawHeroField } from './hero-field.js';
 import { updateSheetGeometry } from './sheets.js';
 const root=document.documentElement;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -23,7 +24,7 @@ let cursorClientX=-1000,cursorClientY=-1000,pointerInside=false;
 let pointerX=0,pointerY=0,smoothX=0,smoothY=0;
 let frame=0,lastTime=0,time=0,smoothScroll=scrollY,targetScroll=scrollY,workDistance=0,metrics={};
 let forcePaint=true,hidden=document.hidden;
-const revealSelectors='.selected-heading h2,.selected-heading>p,.award-stamp,.award-hero h2,.award-feature,.award-list>div,.profile-heading,.profile-intro,.timeline>div,.offscreen>.mono,.interest-grid>div,.club-note,.index-heading,.index-row,.index-after,.resume-copy,.contact-intro,.contact-details,.footer-bottom,.capability-list>div';
+const revealSelectors='.selected-heading h2,.selected-heading>p,.award-stamp,.award-hero h2,.award-feature,.award-list>div,.profile-heading,.profile-intro,.timeline>div,.offscreen>.mono,.interest-grid>div,.club-note,.index-heading,.index-row,.index-after,.resume-copy,.capability-list>div';
 const reveals=[...document.querySelectorAll(revealSelectors)].map(el=>{el.classList.add('cinematic-element');return{el,top:0,height:0}});
 const tiltElements=[...document.querySelectorAll('[data-depth]')].map(el=>({el,x:0,y:0,tx:0,ty:0,lx:50,ly:50}));
 const graphics=[...document.querySelectorAll('.project-visual')];
@@ -49,12 +50,13 @@ function tick(now){
  smoothX=lerp(smoothX,pointerX,1-Math.exp(-dt/190));smoothY=lerp(smoothY,pointerY,1-Math.exp(-dt/190));
 
  const heroVisible=opening&&scrollY<metrics.opening.height+100;
+ if(heroVisible)drawHeroField(smoothX,smoothY,clamp(smoothScroll/metrics.opening.height),paused);
 
  root.style.setProperty('--page-progress',String(clamp(smoothScroll/metrics.max)));
  root.style.setProperty('--ambient-x',(70+Math.sin(smoothScroll*.0003)*22)+'%');root.style.setProperty('--ambient-y',(25+Math.sin(smoothScroll*.0002)*35)+'%');root.style.setProperty('--pointer-x',String(smoothX));root.style.setProperty('--pointer-y',String(smoothY));
  if(!paused){
-  if(opening)root.style.setProperty('--opening-progress',String(clamp(smoothScroll/metrics.opening.height)));
-  if(mind){const p=clamp((smoothScroll-metrics.mind.top+innerHeight*.2)/Math.max(1,metrics.mind.height-innerHeight*.7));reading.forEach((el,i)=>{const a=clamp(p*(reading.length+3)-i);el.style.opacity=String(.12+a*.88);el.style.filter='blur('+((1-a)*5)+'px)';el.style.transform='translate3d(0,'+((1-a)*9)+'px,0)'})}
+  if(opening){root.style.setProperty('--opening-progress',String(clamp(smoothScroll/metrics.opening.height)))}
+  if(mind){const p=clamp((smoothScroll-metrics.mind.top+innerHeight*.2)/Math.max(1,metrics.mind.height-innerHeight*.7));reading.forEach((el,i)=>{const a=clamp(p*(reading.length+3)-i);el.style.setProperty('--term-progress',String(a));el.classList.toggle('term-filled',a>.65);el.style.opacity=String(.12+a*.88);el.style.filter='blur('+((1-a)*5)+'px)';el.style.transform='translate3d(0,'+((1-a)*9)+'px,0)'})}
   masks.forEach((el,i)=>{const p=clamp(smoothScroll/Math.max(1,metrics.opening.height));el.style.setProperty('--name-shift',((i===0?-1:1)*p*innerWidth*.045)+'px')});
   for(const item of textMasks){const p=clamp((smoothScroll+innerHeight*.9-item.top)/(innerHeight*.45));item.el.style.setProperty('--mask-y',((1-p)*105)+'%');item.el.style.setProperty('--mask-blur',((1-p)*8)+'px')}
 
@@ -90,13 +92,12 @@ addEventListener('pagehide',()=>{hidden=true;cancelAnimationFrame(frame);frame=0
 setMotion();
 
 const themeButton=document.querySelector('.theme-switch');
-function syncTheme(){const light=root.dataset.theme==='light';if(themeButton){themeButton.setAttribute('aria-pressed',String(light));themeButton.setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');themeButton.querySelector('[data-theme-label]').textContent=light?'Dark':'Light'}document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#fdfbff':'#000000')}
-themeButton?.addEventListener('click',()=>{const light=root.dataset.theme!=='light';if(light)root.dataset.theme='light';else delete root.dataset.theme;try{localStorage.setItem('portfolio-theme',light?'light':'dark')}catch{}syncTheme()});syncTheme();
+function syncTheme(){const light=root.dataset.theme==='light';if(themeButton){themeButton.setAttribute('aria-pressed',String(light));themeButton.setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');themeButton.querySelector('[data-theme-label]').textContent=light?'Dark':'Light'}document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#ffffff':'#000000')}
+themeButton?.addEventListener('click',()=>{const light=root.dataset.theme!=='light';if(light)root.dataset.theme='light';else delete root.dataset.theme;try{localStorage.setItem('portfolio-theme',light?'light':'dark')}catch{}syncTheme();schedule()});syncTheme();
 let introTimer;
 function finishIntro(){clearTimeout(introTimer);root.classList.remove('intro-pending');}
-function playIntro(){if(reduced.matches){finishIntro();return}if(!document.querySelector('.signature-intro')){try{sessionStorage.setItem('portfolio-replay-intro','yes')}catch{}location.href='/';return}root.classList.remove('intro-pending');void root.offsetWidth;root.classList.add('intro-pending');introTimer=setTimeout(finishIntro,3550)}
 if(root.classList.contains('intro-pending'))introTimer=setTimeout(finishIntro,3550);
-document.querySelector('.skip-intro')?.addEventListener('click',finishIntro);document.querySelector('.replay-intro')?.addEventListener('click',playIntro);
+document.querySelector('.skip-intro')?.addEventListener('click',finishIntro);
 addEventListener('keydown',event=>{if(event.key==='Escape'||event.key==='Tab')finishIntro()});
 reduced.addEventListener('change',()=>{if(reduced.matches)finishIntro()});
 

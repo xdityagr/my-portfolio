@@ -28,12 +28,13 @@ The production output is dist/. It includes the homepage, nine case studies, ré
 - src/pages.mjs — case-study pages and 404.
 - src/components.mjs — navigation, contact, project illustrations, and metadata.
 - public/experience.js — scroll choreography, theme and motion controls, intro lifecycle.
-- public/sheets.js — shared barrel geometry, cursor flex, and organic ink reveal.
+- public/sheets.js — GPU mesh for shared barrel geometry, cursor flex, and organic ink; Canvas 2D fallback.
+- public/hero-field.js — cached, event-driven hero gradient and grain drawing.
 - public/experience.css — themes and responsive motion layouts.
 - public/styles.css — shared base and case-study styles.
 - public/app.js — project filtering and email copy.
 
-Dark mode uses black and white. Light mode keeps white backgrounds with cool blue and sage typography. The intro plays on direct homepage visits and refreshes, can be skipped, and is disabled for reduced-motion preferences. Internal home links and browser history return immediately without replaying it. Gallery cards bend along a shared cylinder on desktop; touch layouts stack cards and reveal color as they enter view. Navigation and content remain usable without JavaScript.
+Dark mode uses black and white. Light mode keeps white backgrounds with bright ice-blue and periwinkle typography. The hero uses softly moving monochrome contours in dark mode and a fine-grain periwinkle gradient in light mode, both responding gently to the cursor; case-study openings use complementary two-color gradient and grain treatments. The intro plays on direct homepage visits and refreshes, can be skipped, and is disabled for reduced-motion preferences. Internal home links and browser history return immediately without replaying it. Gallery cards bend along a shared cylinder on desktop; touch layouts stack cards and reveal color as they enter view. Navigation and content remain usable without JavaScript.
 
 Contact: gauraditya@outlook.in. Canonical domain: adityagaur.dev. Repository: https://github.com/xdityagr/my-portfolio.
 
@@ -65,3 +66,7 @@ Import xdityagr/my-portfolio into Vercel, keep the root directory at the reposit
 ## Assets
 
 Fonts are self-hosted under the SIL Open Font License; license texts accompany them in public/assets/. StarForge's chart is actual project output. The other project artwork is custom illustrative UI. Local research, reference screenshots, generated output, and QA screenshots are excluded from Git.
+
+## Card rendering
+
+Featured artwork is rendered from the same HTML illustrations into compact WebP textures by scripts/render-card-textures.mjs. Run this script against a running local preview after changing the illustration content/styles; it accepts the same Playwright override variables as the browser tests. Commit the generated public/assets/cards files. Textures load near the viewport, DPR is capped, and surfaces draw only when their geometry or ink changes. WebGL failure falls back to an animated Canvas 2D surface; HTML artwork remains available while textures load and without JavaScript.
