@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.qa/
+.vercel/
+.env*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+
+# Local briefs and visual references
+samples/
+research/
+whoami.md
+projects_list.md
+portfolio_study.md
+fusion.png
+starforge.png

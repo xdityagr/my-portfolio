@@ -1,0 +1,40 @@
+
+export const escape = (value = '') => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export const arrow = '<span aria-hidden="true">↗</span>';
+export const external = (url, label, cls = '') => '<a class="'+cls+'" href="'+escape(url)+'" target="_blank" rel="noopener noreferrer">'+label+'<span class="sr-only"> (opens in new tab)</span></a>';
+export function header(home = false) {
+return '<a class="skip" href="#main">Skip to content</a><header class="header"><a class="monogram" href="/" aria-label="Aditya Gaur home">ag<span>.</span></a><a class="header-role" href="/#about">SOFTWARE ENGINEER<br>CREATIVE TECHNOLOGIST</a><nav aria-label="Main navigation"><a href="'+(home?'#work':'/#work')+'">Work</a><a href="'+(home?'#about':'/#about')+'">About</a><a href="/resume/">Résumé</a><a href="'+(home?'#contact':'/#contact')+'">Let’s talk '+arrow+'</a><button type="button" class="theme-switch" aria-label="Switch to light theme" aria-pressed="false"><span class="theme-dot" aria-hidden="true"></span><span data-theme-label>Light</span></button></nav></header>';
+}
+export function footer() {
+return '<footer id="contact" class="contact section-pad"><div class="section-marker"><span>04 / CONTACT</span><span>GOOD WORK STARTS WITH A CONVERSATION</span></div><p class="contact-intro">Have something in mind?</p><a class="contact-title" href="mailto:gauraditya@outlook.in">Let’s <em>talk.</em><span aria-hidden="true">↗</span></a><div class="contact-details"><a class="email-link" href="mailto:gauraditya@outlook.in">gauraditya@outlook.in</a><button class="copy-email" type="button" data-copy="gauraditya@outlook.in" hidden>Copy email <span aria-hidden="true">⧉</span></button><span class="copy-status sr-only" role="status"></span></div><div class="footer-bottom"><a href="/" class="footer-brand">ADITYA GAUR<span>SOFTWARE, WITH INTENTION.</span></a><div>'+external('https://github.com/xdityagr','GitHub '+arrow)+'<a href="#top">Back to top ↑</a><button class="replay-intro" type="button">Replay intro</button><button type="button" data-motion aria-pressed="false">Pause motion</button></div><span class="mono">© '+new Date().getFullYear()+'</span></div></footer>';
+}
+export function visual(p, detail=false) {
+const label = detail?'':'<span class="visual-cta">Explore project '+arrow+'</span>';
+const base = '<div class="project-visual visual-'+p.visual+'" style="--project-color:'+p.color+'"><span class="visual-caption">'+(p.visual==='stars'?'ACTUAL OUTPUT / STARFORGE':'PROJECT CONCEPT / '+escape(p.category.toUpperCase()))+'</span>';
+let content = '';
+if(p.visual === 'voice') {
+const bars=Array.from({length:65},(_,i)=>'<i style="--height:'+Math.round(12+Math.abs(Math.sin(i*.41))*55+Math.sin(i*.095)*28)+'%;--delay:'+i*-.09+'s"></i>').join('');
+content='<div class="voice-word">pineyard<span>.ai</span></div><div class="wave" aria-hidden="true">'+bars+'</div><div class="voice-bottom"><span>A voice.<br>A conversation.<br><em>An opportunity.</em></span><span class="voice-dot" aria-hidden="true">↗</span></div>';
+} else if (p.visual === 'proof') {
+content='<div class="proof-word">credent</div><div class="proof-layout"><div class="proof-private"><span>PRIVATE INPUT</span><div class="redacted"></div><div class="redacted short"></div><div class="redacted"></div><small>Revenue stays private.</small></div><div class="proof-seal" aria-hidden="true"><div>∑</div></div><div class="proof-public"><span>PUBLIC PROOF</span><strong>≥ X</strong><small>The threshold is verified.</small></div></div><span class="proof-tagline">Private credit. <em>Public book.</em></span>';
+} else if (p.visual === 'route') {
+content='<svg class="route-map" viewBox="0 0 1200 700" fill="none" aria-hidden="true"><g stroke="#91a1a0" stroke-opacity=".18" stroke-width="2">'+Array.from({length:14},(_,i)=>'<path d="M'+(i*110-200)+' 0 L'+(i*110+180)+' 700"/><path d="M0 '+(i*75-200)+' L1200 '+(i*75+200)+'"/>').join('')+'</g><path class="route-line" d="M270 510 L400 440 L360 360 L620 245 L700 380 L930 275" stroke="#c5dacb" stroke-width="7" stroke-linejoin="round"/><circle cx="270" cy="510" r="12" fill="#e7eee7"/><circle cx="930" cy="275" r="15" fill="#e7eee7"/><circle cx="930" cy="275" r="34" stroke="#e7eee7" stroke-opacity=".35"/></svg><div class="route-word">Safe<span>HER</span><small>A route is a moment.<br>Not just a line on a map.</small></div><div class="route-time"><span>DEPARTURE MATTERS</span><strong>21:40</strong></div>';
+} else if (p.visual === 'stars') {
+content='<img class="star-chart" src="/assets/star-chart.svg" width="900" height="900" loading="lazy" decoding="async" alt="Actual StarForge output: a sky chart with plotted stars and constellation lines"><div class="stars-word">StarForge<span>CELESTIAL MECHANICS → VECTOR ART</span></div>';
+} else if (p.visual==='schemes') {
+content='<div class="schemes-art"><span class="scheme-script" lang="hi">अवसर</span><strong>Avsarathi<span>.ai</span></strong><p>Find a path.<br><em>Find your opportunity.</em></p><div class="scheme-flow">INPUT <span>→</span> ELIGIBILITY <span>→</span> OPPORTUNITY</div></div>';
+} else if (p.visual==='caret') {
+content='<div class="caret-art"><strong>Stay in<br>the <em>flow.</em><span class="caret-cursor">↖</span></strong><div class="keycombo"><kbd>shift</kbd><span>+</span><kbd>shift</kbd><span>→ Caret AI</span></div></div>';
+} else {
+const code=p.slug==='fusion'?'fun double(x) { x * 2 }\n\nlet answer = double(21)\nprint(answer)':p.slug==='configx'?'app\n ├─ settings\n │   ├─ theme = "dark"\n │   └─ language = "en"\n └─ state':'capture(code)\n     ↓\norganise(metadata)\n     ↓\nfind("the useful bit")';
+content='<div class="code-art"><span>'+escape(p.status.toUpperCase())+'</span><strong>'+escape(p.name)+'</strong><pre><code>'+escape(code)+'</code></pre></div>';
+}
+return base+content+label+'</div>';
+}
+export function projectPanel(p,i) {
+return '<article class="project project-'+p.slug+' reveal"><div class="project-topline"><span class="mono">'+String(i+1).padStart(2,'0')+' / '+escape(p.category.toUpperCase())+'</span><span class="mono">'+escape(p.status)+'</span></div><a class="project-art-link" href="/work/'+p.slug+'/" aria-label="Explore '+escape(p.name)+'">'+visual(p)+'</a><div class="project-caption"><h3><a href="/work/'+p.slug+'/">'+escape(p.name)+' '+arrow+'</a></h3><p>'+escape(p.summary)+'</p><span class="project-role mono">'+escape(p.role)+'</span></div></article>';
+}
+export function documentPage({title,description,path='/',body,home=false}) {
+const boot='<script>try{if(localStorage.getItem("portfolio-theme")==="light")document.documentElement.dataset.theme="light";'+(home?'if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.classList.add("intro-pending");setTimeout(()=>document.documentElement.classList.remove("intro-pending"),4500)}':'')+'}catch{}</script>';
+return '<!doctype html><html lang="en"><head><meta charset="UTF-8">'+boot+'<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#000000"><title>'+escape(title)+'</title><meta name="description" content="'+escape(description)+'"><link rel="canonical" href="https://adityagaur.dev'+path+'"><meta property="og:type" content="website"><meta property="og:title" content="'+escape(title)+'"><meta property="og:description" content="'+escape(description)+'"><meta property="og:url" content="https://adityagaur.dev'+path+'"><meta property="og:image" content="https://adityagaur.dev/assets/social.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" type="image/svg+xml" href="/assets/favicon.svg"><link rel="preload" href="/assets/display.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/experience.css"><script type="module" src="/app.js"></script><script type="module" src="/experience.js"></script></head><body id="top"><div class="ambient-sky" aria-hidden="true"></div><div class="reading-progress" aria-hidden="true"></div>'+header(home)+body+footer()+'</body></html>';
+}

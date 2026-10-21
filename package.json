@@ -1,0 +1,19 @@
+{
+  "name": "aditya-gaur-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs",
+    "test": "node scripts/verify.mjs",
+    "test:browser": "node scripts/browser-test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2"
+  }
+}

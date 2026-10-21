@@ -1,0 +1,273 @@
+[
+  {
+    "slug": "pineyard",
+    "name": "Pineyard.ai",
+    "category": "Voice AI / Product",
+    "type": "AI & products",
+    "eyebrow": "Conversations, with purpose.",
+    "summary": "AI voice agents for the conversations businesses cannot afford to miss.",
+    "role": "Tech Lead · Website design & development",
+    "status": "Startup",
+    "live": "https://pineyard.ai",
+    "visual": "voice",
+    "color": "#245cf2",
+    "stack": [
+      "Voice AI",
+      "Product engineering",
+      "Web development"
+    ],
+    "problem": "A missed call can mean a missed opportunity. Pineyard helps businesses follow up with leads, recover lost revenue, and keep high-intent conversations moving.",
+    "approach": "My work at Pineyard sits at the intersection of technical leadership and product presentation. I designed and built the website, translating a voice AI platform into a clear, approachable product experience.",
+    "decision": "The website focuses on the business workflow: a lead arrives, an agent has a conversation, and the next step becomes clear. The visual language makes an invisible voice product understandable.",
+    "note": "Pineyard is a team product. My role is Tech Lead; the company owns the platform code.",
+    "flow": [
+      "Incoming lead",
+      "AI conversation",
+      "Business follow-up"
+    ],
+    "source": "https://pineyard.ai"
+  },
+  {
+    "slug": "credent",
+    "name": "Credent",
+    "category": "Privacy / Fintech",
+    "type": "Systems",
+    "eyebrow": "Proof without exposure.",
+    "summary": "A revenue-based credit marketplace with private financials and a public lending ledger.",
+    "role": "Personal project",
+    "status": "Devnet prototype",
+    "live": "https://credent-app.vercel.app",
+    "repo": "https://github.com/xdityagr/Credent",
+    "visual": "proof",
+    "color": "#101522",
+    "stack": [
+      "Next.js",
+      "FastAPI",
+      "Solana",
+      "Noir",
+      "PostgreSQL"
+    ],
+    "problem": "Lenders need evidence of a business’s ability to repay. Sharing the whole set of books reveals much more than that decision requires.",
+    "approach": "Credent separates private revenue from public proof. A Noir circuit proves that a revenue threshold is met, while a hash-chained ledger records loans, settlements, and losses. A lockbox routes incoming payments to installments before releasing the operating balance.",
+    "decision": "Privacy is an architectural boundary. Raw revenue stays in private tables, public endpoints are allow-listed, and on-chain inflows are aggregated across borrowers. Senior and junior tranches define how yield and losses flow through a pool.",
+    "note": "A prototype on local chains and Solana devnet, with test-mode Stripe. It has not been audited and is not intended for real funds.",
+    "flow": [
+      "Private revenue",
+      "Zero-knowledge proof",
+      "Public loan ledger"
+    ],
+    "source": "https://github.com/xdityagr/Credent/blob/main/README.md"
+  },
+  {
+    "slug": "safeher",
+    "name": "SafeHER",
+    "category": "Geospatial / Public good",
+    "type": "Systems",
+    "eyebrow": "A route is a moment.",
+    "summary": "Time-aware route planning that considers when you reach each street.",
+    "role": "Personal project",
+    "status": "Prototype",
+    "live": "https://try-safeher.vercel.app/",
+    "repo": "https://github.com/xdityagr/project-safeher",
+    "visual": "route",
+    "color": "#e9dfcd",
+    "stack": [
+      "Python",
+      "FastAPI",
+      "PostGIS",
+      "Next.js",
+      "Time-dependent A*"
+    ],
+    "problem": "The shortest route is not always the most practical one after dark. Lighting, open businesses, and street activity change over the course of a journey.",
+    "approach": "SafeHER uses time-dependent A*: every edge is evaluated at its estimated arrival time. It brings together road geometry, lighting estimates, activity signals, nearby safe havens, and community reports.",
+    "decision": "The system avoids publishing a danger map. It presents route-level guidance and tracks the source of estimates, allowing the experience to acknowledge incomplete data instead of assigning a permanent label to a neighbourhood.",
+    "note": "A routing research prototype. Estimates are contextual signals, not a guarantee of personal safety.",
+    "flow": [
+      "Departure time",
+      "Street-level signals",
+      "Time-aware route"
+    ],
+    "source": "https://github.com/xdityagr/project-safeher/blob/main/README.md"
+  },
+  {
+    "slug": "starforge",
+    "name": "StarForge",
+    "category": "Astronomy / Creative tooling",
+    "type": "Developer tools",
+    "eyebrow": "Precision, written in stars.",
+    "summary": "Real celestial mechanics, rendered as publication-ready vector star charts.",
+    "role": "Creator",
+    "status": "Open-source Python package",
+    "live": "https://pypi.org/project/py-starforge/",
+    "repo": "https://github.com/xdityagr/ProjectStarForge",
+    "visual": "stars",
+    "color": "#134bc7",
+    "stack": [
+      "Python",
+      "Skyfield",
+      "Hipparcos catalog",
+      "SVG"
+    ],
+    "problem": "A star chart should be scientifically grounded and visually considered. Scientific plotting tools often leave the design work to the person using them.",
+    "approach": "StarForge combines real ephemerides and the Hipparcos catalog with a composable Python API and an SVG rendering pipeline. Location, time, field of view, and styling all feed a reproducible output.",
+    "decision": "Vector output keeps the result useful beyond a browser. Charts stay crisp in print, and the same engine can be used from a short Python script or the command line.",
+    "note": "An open-source Python package for reproducible astronomical charts. The banner and example chart are from the project.",
+    "flow": [
+      "Location + time",
+      "Celestial positions",
+      "Vector composition"
+    ],
+    "source": "https://github.com/xdityagr/ProjectStarForge/blob/main/README.md"
+  },
+  {
+    "slug": "avsarathi",
+    "name": "Avsarathi.ai",
+    "category": "AI / Access to opportunity",
+    "type": "AI & products",
+    "eyebrow": "Make opportunity legible.",
+    "summary": "A scheme-matching assistant that pairs conversational input with deterministic eligibility.",
+    "role": "Project contributor",
+    "status": "Hackathon project",
+    "live": "https://avsarathi-ai.vercel.app",
+    "repo": "https://github.com/xdityagr/Avsarathi.ai",
+    "visual": "schemes",
+    "color": "#382d20",
+    "stack": [
+      "Python",
+      "FastAPI",
+      "LangGraph",
+      "Gemini",
+      "Twilio"
+    ],
+    "problem": "Government support is only useful when the people it is intended for can find it, understand the conditions, and identify a channel partner.",
+    "approach": "The documented pipeline separates three tasks: eligibility rules, semantic extraction from conversational input, and partner routing. The web portal explains why a person qualifies, estimates loan costs, and identifies eligible partners.",
+    "decision": "The eligibility decision is deterministic. Language-model extraction helps structure free text; it does not replace the rules that determine qualification.",
+    "note": "A hackathon project. The documented implementation focuses on NSFDC eligibility and partner routing.",
+    "flow": [
+      "Conversational input",
+      "Eligibility rules",
+      "Partner matching"
+    ],
+    "source": "https://github.com/xdityagr/Avsarathi.ai/blob/main/README.md"
+  },
+  {
+    "slug": "caret",
+    "name": "Caret AI",
+    "category": "Desktop / AI utility",
+    "type": "AI & products",
+    "eyebrow": "Stay in the flow.",
+    "summary": "Quick AI access at the cursor, without leaving the task at hand.",
+    "role": "Creator",
+    "status": "Early desktop project",
+    "live": "https://caretai.vercel.app",
+    "repo": "https://github.com/xdityagr/CaretAI",
+    "extra": "https://github.com/xdityagr/caret-website",
+    "visual": "caret",
+    "color": "#27242e",
+    "stack": [
+      "Python",
+      "PySide6",
+      "QCFx2",
+      "AI models"
+    ],
+    "problem": "A small writing or editing task can become a context switch: copy text, open an AI app, enter a prompt, and bring the result back.",
+    "approach": "Caret AI brings the interaction beside the cursor. Select text, press Shift twice, enter a prompt, and receive the result on the clipboard. The project also explores desktop appearance through a custom PySide6 theming library.",
+    "decision": "The interaction starts from the application already in use. Keyboard access and clipboard output keep the utility lightweight and close to a real everyday workflow.",
+    "note": "An early release. The linked repositories contain the app and its evolving website/release materials.",
+    "flow": [
+      "Select text",
+      "Ask at the cursor",
+      "Copy the result"
+    ],
+    "source": "https://github.com/xdityagr/CaretAI/blob/main/README.md"
+  },
+  {
+    "slug": "configx",
+    "name": "ConfigX",
+    "category": "Data / Developer tooling",
+    "type": "Developer tools",
+    "eyebrow": "Give data a structure.",
+    "summary": "A hierarchical data engine built around readable keypath queries.",
+    "role": "Creator · Open-source project",
+    "status": "Alpha",
+    "live": "https://pypi.org/project/pyconfigx/0.1.2/",
+    "repo": "https://github.com/xdityagr/ProjectConfigX",
+    "extra": "https://github.com/GDSC-Manipal-University-Jaipur/ProjectConfigX",
+    "visual": "code",
+    "color": "#28261e",
+    "stack": [
+      "Python",
+      "ConfigXQL",
+      "Hierarchical storage"
+    ],
+    "problem": "Configuration, application state, and structured metadata often end up behind different interfaces, even when the underlying task is navigating a hierarchy.",
+    "approach": "ConfigX explores a shared interface through dot-separated keypaths and ConfigXQL. The alpha focuses on basic operations over branches and values, with persistence described through snapshots and a write-ahead log.",
+    "decision": "The query surface makes hierarchy explicit. More ambitious features—AI-assisted queries, schema enforcement, and batch transactions—are described as future scope rather than capabilities of the current alpha.",
+    "note": "Alpha software. AI reasoning, advanced wildcard queries, and other roadmap features are not presented as shipped.",
+    "flow": [
+      "Keypath query",
+      "Hierarchical engine",
+      "Structured state"
+    ],
+    "source": "https://github.com/xdityagr/ProjectConfigX/blob/main/README.md"
+  },
+  {
+    "slug": "fusion",
+    "name": "Fusion",
+    "category": "Language / Interpreter",
+    "type": "Developer tools",
+    "eyebrow": "Learn by building the language.",
+    "summary": "An experimental programming language, from tokens to a working interpreter.",
+    "role": "Creator",
+    "status": "v0.1.0-alpha",
+    "live": "https://github.com/xdityagr/Fusion/releases/tag/v0.1.0-alpha",
+    "repo": "https://github.com/xdityagr/Fusion",
+    "visual": "code",
+    "color": "#fa620b",
+    "stack": [
+      "Lexer",
+      "Parser",
+      "Interpreter",
+      "Language design"
+    ],
+    "problem": "Building a language is a way to understand the machinery behind every program: how source becomes structure, how expressions evaluate, and how errors reach the developer.",
+    "approach": "Fusion implements a lexer, parser, and interpreter with variables, control flow, functions, lists, and tracebacks. It includes an interactive shell and supports running source files.",
+    "decision": "The current release is an interpreter. LLVM compilation, concurrency, and higher-performance execution remain longer-term goals.",
+    "note": "Experimental alpha. Performance, concurrency, and memory-safety aspirations are not benchmarked claims.",
+    "flow": [
+      "Source text",
+      "Tokens + syntax tree",
+      "Interpreter"
+    ],
+    "source": "https://github.com/xdityagr/Fusion/blob/main/README.md"
+  },
+  {
+    "slug": "snippify",
+    "name": "Snippify",
+    "category": "Python / Productivity",
+    "type": "Developer tools",
+    "eyebrow": "Keep the useful bits.",
+    "summary": "A Python library for saving, finding, and reusing code snippets.",
+    "role": "Creator",
+    "status": "Published Python package",
+    "live": "https://pypi.org/project/Snippify/1.0.2/",
+    "repo": "https://github.com/xdityagr/Project-Snippify",
+    "visual": "code",
+    "color": "#212b25",
+    "stack": [
+      "Python",
+      "Code introspection",
+      "CLI output"
+    ],
+    "problem": "Useful snippets tend to disappear into old projects, scattered notes, and half-remembered files.",
+    "approach": "Snippify captures Python objects or selected line ranges with metadata, lists saved snippets in formatted tables, and retrieves them by title or identifier.",
+    "decision": "Capturing a snippet from an object or line range keeps the library close to the way developers already work. Search and retrieval are part of the same workflow.",
+    "note": "A focused developer utility available as a Python package.",
+    "flow": [
+      "Capture code",
+      "Store with metadata",
+      "Find + reuse"
+    ],
+    "source": "https://github.com/xdityagr/Project-Snippify/blob/main/README.md"
+  }
+]
