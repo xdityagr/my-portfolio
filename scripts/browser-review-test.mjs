@@ -32,17 +32,17 @@ try{
   const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
   const page=await context.newPage();page.on('pageerror',e=>failures.push('C1: '+e.message));
   await page.goto(base);await settle(page);await inkReady(page);
-  // Park where no live ink is on screen (the clippings' results are plain italics), so only tilt could wake the ink.
-  await into(page,'.board .clip:nth-child(8)',.5);await page.waitForTimeout(1500);
-  check(await page.evaluate(()=>window.portfolioInk.state().items.every(it=>!it.visible)),'C1: no live ink is in view');
+  // Park at the first spot below the hero with no live ink in view, so only tilt could wake the ink.
+  const parked=await page.evaluate(async()=>{for(let y=innerHeight*2;y<document.documentElement.scrollHeight;y+=innerHeight*.4){scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,300));if(window.portfolioInk.state().items.every(it=>!it.visible))return y}return -1});
+  check(parked>=0,'C1: no live ink is in view');await page.waitForTimeout(1500);
   const before=await page.evaluate(()=>window.portfolioInk.state().frames);
   await page.evaluate(()=>new Promise(done=>{let n=0;const t=setInterval(()=>{dispatchEvent(new DeviceOrientationEvent('deviceorientation',{alpha:0,beta:35+Math.random()*.6,gamma:Math.random()*.6}));if(++n>60){clearInterval(t);done()}},16)}));
   const drawn=await page.evaluate(()=>window.portfolioInk.state().frames)-before;
   check(drawn<=3,'C1: orientation jitter away from the hero drew '+drawn+' frames');
   await context.close();
  }
- // C2: light-theme ink keeps 3:1 against white on home accents and on hue-shifted case titles.
- for(const [route,selector,label] of [['/','.selected-heading canvas.ink-mirror','home "work."'],['/work/safeher/','.case-opening h1 canvas.ink-mirror','SafeHER title'],['/work/snippify/','.case-opening h1 canvas.ink-mirror','Snippify title']]){
+ // C2: light-theme ink keeps 3:1 against white on home accents (case titles are plain; their ink is the background).
+ for(const [route,selector,label] of [['/','.selected-heading canvas.ink-mirror','home "work."']]){
   const context=await browser.newContext({viewport:{width:1440,height:900},colorScheme:'light'});await context.addInitScript(light,'light');
   const page=await context.newPage();page.on('pageerror',e=>failures.push('C2: '+e.message));
   await page.goto(base+route);await settle(page);await inkReady(page);
