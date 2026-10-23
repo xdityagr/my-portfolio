@@ -28,6 +28,29 @@ for(const route of routes){
   refs++;
  }
 }
+const home=await fs.readFile(path.join(dist,'index.html'),'utf8');
+const heroHeading=home.match(/<h1[\s\S]*?<\/h1>/)[0];
+assert.equal((heroHeading.match(/data-ink="(paint|full)"/g)||[]).length,11,'hero name must have 11 ink letters');
+assert.ok(!home.includes('hero-field'),'the light-theme gradient canvas is gone');
+const mind=home.match(/<section id="mind"[\s\S]*?<\/section>/)[0];
+assert.equal(new Set([...mind.matchAll(/data-ink="term" data-ink-group="([^"]+)"/g)].map(m=>m[1])).size,3,'three Mind terms are ink');
+const enterGroups=[...new Set([...home.matchAll(/data-ink="enter" data-ink-group="([^"]+)"/g)].map(m=>m[1]))];
+assert.deepEqual(enterGroups.filter(g=>!/^clip-\d+$/.test(g)).sort(),['anna','code','director','highlights','how','look','quote','rabbit','talk','toolkit','work'],'home heading accents are ink');
+assert.ok(!/data-ink-group="(clip|tl)-/.test(home),'repeated accents (clipping results, timeline phrases) stay plain italics');
+assert.ok(/data-ink="full" data-ink-group="winner"/.test(home),'the pressed headline inks "winner."');
+// Case studies ink only the footer's "talk." (their titles are plain; the page behind them is inked); other pages carry no ink.
+for(const route of routes.filter(r=>r!=='index.html')){
+ const html=await fs.readFile(path.join(dist,route),'utf8'),inked=[...html.matchAll(/data-ink="([a-z]+)" data-ink-group="([^"]+)"/g)];
+ if(route.startsWith('work'))assert.ok(inked.length>0&&inked.every(m=>m[1]==='enter'&&m[2]==='talk'),route+' inks only the footer talk');
+ else assert.equal(inked.length,0,route+' must not carry ink');
+}
+assert.ok(/<ul class="board" role="list">/.test(home)&&/<ol class="ink-timeline" role="list">/.test(home),'styled lists keep role="list"');
+// The light theme is periwinkle now: no mint left over, and nothing styles or scripts markup that was removed.
+for(const file of (await fs.readdir(dist)).filter(f=>/\.(css|js)$/.test(f))){
+ const text=(await fs.readFile(path.join(dist,file),'utf8')).toLowerCase();
+ for(const hex of ['#829bc3','#88b6ae','#658e86','#98a4d8'])assert.ok(!text.includes(hex),file+' still uses '+hex);
+ for(const dead of ['recognition-card','experience-book','tech-badge','hero-field','ledger-row','sih-feature','odometer'])assert.ok(!text.includes(dead),file+' still mentions '+dead);
+}
 for(const asset of ['display.ttf','editorial.ttf','star-chart.svg','social.png','resume-preview.png']){
  assert.ok((await fs.stat(path.join(dist,'assets',asset))).size>100,'Missing or empty asset '+asset);
 }
