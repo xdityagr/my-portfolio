@@ -26,16 +26,17 @@ const copy = document.querySelector('[data-copy]');
 if(copy && navigator.clipboard && window.isSecureContext) {
  copy.hidden=false;
  let copyTimeout;
+ const copyMarkup=copy.innerHTML;
  copy.addEventListener('click',async()=>{
   try {
    await navigator.clipboard.writeText(copy.dataset.copy);
-   copy.textContent='Email copied ✓';
+   copy.innerHTML='<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';copy.setAttribute('aria-label','Email copied');copy.title='Email copied';
    document.querySelector('.copy-status').textContent='Email address copied to clipboard.';
    clearTimeout(copyTimeout);
-   copyTimeout=setTimeout(()=>copy.textContent='Copy email ⧉',2500);
+   copyTimeout=setTimeout(()=>{copy.innerHTML=copyMarkup;copy.setAttribute('aria-label','Copy email address');copy.title='Copy email address'},2500);
   } catch {
    document.querySelector('.copy-status').textContent='Copy unavailable. Use the email link to get in touch.';
-   copy.textContent='Use email link ↗';
+   copy.setAttribute('aria-label','Copy unavailable; use the email link');copy.title='Use the email link';
   }
  });
 }

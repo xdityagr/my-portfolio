@@ -1,0 +1,43 @@
+/* Ink system: each group of ink words gets a mirror canvas inside its own container, so ink scrolls,
+   clips and fades with the text. The text keeps its layout and accessibility; only its fill is handed
+   to the mirrors once the renderer is ready. */
+/* Mirrors start at zero size: an unsized canvas is 300×150 and, near a phone's right edge, would widen the page
+   until ink first lays it out. */
+.ink-mirror{position:absolute;left:0;top:0;width:0;height:0;display:block;pointer-events:none;z-index:1;margin:0;max-width:none}
+.ink-ready [data-ink]{-webkit-text-fill-color:transparent;text-shadow:none!important}
+
+/* Hero: the name block sits midway between the opening copy and the foot. */
+.hero-stage{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;min-height:0}
+.type-opening .hero-stage .elastic-name{margin:0}
+.type-opening .hero-foot{margin-top:0}
+:root[data-theme=light]{--name-a:#15121b;--name-b:#969ef2}
+
+/* Very short screens: the Mind statement can't fit, so it scrolls normally (no pin) and each word reveals as it
+   reaches the reading line. On phones it pins like everywhere else, set small enough to fit. */
+@media(max-height:640px){
+ .mind-chapter{height:auto!important}
+ .mind-sticky{position:relative!important;top:auto!important;height:auto!important;min-height:0!important}
+}
+/* Phones: as on desktop, the statement is set as large as the pinned screen allows and centred in it, and the two
+   notes sit as a pair of small columns at the foot of the screen (both clear of the curved edge bands). */
+@media(max-width:700px) and (min-height:641px){
+ .motion-ready:not(.motion-paused) .mind-sticky{padding-top:16svh;padding-bottom:16svh;justify-content:flex-start}
+ .reading-statement{font-size:clamp(34px,10.6vw,46px)!important;line-height:1.06!important;letter-spacing:-.06em!important}
+ .motion-ready:not(.motion-paused) .reading-statement{margin:auto 0}
+ .mind-bottom{display:flex!important;justify-content:space-between;gap:20px!important;margin-top:28px!important}
+ .mind-bottom p{flex:1;font-size:11.5px!important;line-height:1.55!important;max-width:none!important}
+ .mind-bottom p+p{display:block!important}
+}
+@media(max-width:700px) and (min-height:641px) and (max-height:720px){.reading-statement{font-size:clamp(30px,9.4vw,40px)!important}}
+/* Touch devices: per-frame blur filters are the most expensive thing on the page; the reveals keep their motion. */
+@media(pointer:coarse){.text-mask>span,.text-mask>em{filter:none!important;will-change:auto}.reading-word{filter:none!important}}
+
+/* Phones: a horizontal drag on the name stirs the ink (vertical drags still scroll), and a small rocking phone hints
+   that tilting pours the ink. It fades away after the first real tilt. */
+@media(pointer:coarse){.elastic-name{touch-action:pan-y}}
+.tilt-hint{display:inline-flex;align-items:center;gap:10px;margin-left:auto;font:11px/1.4 "Courier New",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);transition:opacity .8s}
+.tilt-hint[hidden]{display:none}
+.tilt-hint i{width:11px;height:19px;border:1.5px solid currentColor;border-radius:3px;animation:tilt-rock 2.6s ease-in-out infinite}
+.tilt-hint.gone{opacity:0}
+@keyframes tilt-rock{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+@media(prefers-reduced-motion:reduce){.tilt-hint i{animation:none}}

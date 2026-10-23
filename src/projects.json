@@ -39,7 +39,7 @@
     "live": "https://credent-app.vercel.app",
     "repo": "https://github.com/xdityagr/Credent",
     "visual": "proof",
-    "color": "#101522",
+    "color": "#0b0705",
     "stack": [
       "Next.js",
       "FastAPI",
